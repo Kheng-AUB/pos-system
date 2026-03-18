@@ -1,0 +1,63 @@
+package com.kheng.pos.features.product.service.impl;
+
+import com.kheng.pos.core.dto.BaseApiResponse;
+import com.kheng.pos.databases.pg.product.entity.Product;
+import com.kheng.pos.databases.pg.product.repository.ProductRepository;
+import com.kheng.pos.exception.AppException;
+import com.kheng.pos.features.product.mapper.ProductMapper;
+import com.kheng.pos.features.product.payload.dto.ProductDto;
+import com.kheng.pos.features.user.dto.response.UserProfileResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+
+import static com.kheng.pos.core.util.GlobalUtils.isBlank;
+
+@Service
+@RequiredArgsConstructor
+public class UpdateProductService {
+    private final ProductRepository productRepository;
+
+    public BaseApiResponse<ProductDto> updateProduct(Long productId, ProductDto productDto, UserProfileResponse userInfo) {
+        BaseApiResponse<ProductDto> response = new BaseApiResponse<>();
+
+        // check if product exist
+        Product product = productRepository.findById(productId).orElse(null);
+        if (product == null) {
+            throw new AppException("Product not found",
+                    HttpStatus.NOT_FOUND, "PRODUCT_NOT_FOUND");
+        }
+
+        if (!isBlank(productDto.getName())) {
+            product.setName(productDto.getName());
+        }
+        if (!isBlank(productDto.getDescription())) {
+            product.setDescription(productDto.getDescription());
+        }
+        if (!isBlank(productDto.getSku())) {
+            product.setSku(productDto.getSku());
+        }
+        if (!isBlank(productDto.getBrand())) {
+            product.setBrand(productDto.getBrand());
+        }
+        if (!isBlank(productDto.getImage())) {
+            product.setImage(productDto.getImage());
+        }
+
+        if (productDto.getMrp() != null) {
+            product.setMrp(productDto.getMrp());
+        }
+        if (productDto.getSellingPrice() != null) {
+            product.setSellingPrice(productDto.getSellingPrice());
+        }
+
+        product.setUpdatedAt(LocalDateTime.now());
+        Product updatedProduct = productRepository.save(product);
+
+        response.setData(ProductMapper.toDto(updatedProduct));
+        response.isSuccess();
+        return response;
+    }
+}
