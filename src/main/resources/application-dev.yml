@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: pos
+
+jwt:
+  secret: Lg2wNGuFaSqTJlke2THH7vLwl6IHmZ5o8Ftl7tGFaMF
+
+server:
+  port: 8080

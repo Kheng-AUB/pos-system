@@ -4,14 +4,18 @@ package com.kheng.pos.configurations.security.service.impl;
 import com.kheng.pos.configurations.jwt.JwtProvider;
 import com.kheng.pos.configurations.security.service.contract.AuthService;
 import com.kheng.pos.core.dto.BaseApiResponse;
-import com.kheng.pos.exception.UserException;
-import com.kheng.pos.features.auth.mapper.UserInfoMapper;
-import com.kheng.pos.databases.user.entities.UserInfo;
+import com.kheng.pos.databases.pg.userinfo.entity.UserInformation;
+import com.kheng.pos.databases.pg.userinfo.entity.UserRole;
+import com.kheng.pos.databases.pg.userinfo.mapper.UserInformationMapper;
+import com.kheng.pos.databases.pg.userinfo.repository.UserInformationRepository;
+import com.kheng.pos.databases.pg.userinfo.repository.UserRoleRepository;
+import com.kheng.pos.exception.AppException;
+import com.kheng.pos.features.auth.dto.UserInformationDto;
 import com.kheng.pos.features.auth.payload.request.LoginRequest;
 import com.kheng.pos.features.auth.payload.request.SignUpRequest;
 import com.kheng.pos.features.auth.payload.response.AuthResponse;
-import com.kheng.pos.databases.user.repositories.UserInfoRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,40 +25,53 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
-import static com.kheng.pos.databases.user.entities.UserRole.ROLE_ADMIN;
-
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
-    private final UserInfoRepository userInfoRepository;
+    private final UserInformationRepository userInformationRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
     private final CustomUserImpl customUserImpl;
+    private final UserRoleRepository userRoleRepository;
 
     @Override
-    public BaseApiResponse<AuthResponse> signup(SignUpRequest request) throws UserException {
+    public BaseApiResponse<AuthResponse> signup(SignUpRequest request) {
         BaseApiResponse<AuthResponse> response = new BaseApiResponse<>();
 
-        UserInfo userInfo = userInfoRepository.findByEmail(request.getEmail());
-        if (userInfo != null) {
-            throw new UserException("User with this email already registered!");
+        if (request.getEmail() == null || request.getEmail().trim().isEmpty()) {
+            throw new AppException("Email is required",
+                    HttpStatus.BAD_REQUEST, "INVALID_EMAIL");
         }
 
-        if (request.getRole().equals(ROLE_ADMIN)) {
-            throw new UserException("You are not allowed to register this user!");
+        UserInformation userInformation = userInformationRepository.findByEmail(request.getEmail());
+        if (userInformation != null) {
+            throw new AppException("User with this email already registered!",
+                    HttpStatus.CONFLICT, "USER_EXISTS");
         }
 
-        UserInfo newUser = buildUserInfo(request);
-        UserInfo savedUser = userInfoRepository.save(newUser);
+        if (request.getRoleId() == 2) {
+            throw new AppException("You are not allowed to register as admin!",
+                    HttpStatus.FORBIDDEN, "ADMIN_REGISTRATION_DENIED");
+        }
+
+        UserInformation newUserInformation = buildUserInformation(request);
+        UserInformation savedUserInformation = userInformationRepository.save(newUserInformation);
 
         Authentication authentication =
-                new UsernamePasswordAuthenticationToken(newUser.getEmail(), newUser.getPassword());
+                new UsernamePasswordAuthenticationToken(newUserInformation.getEmail(), newUserInformation.getPassword());
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         AuthResponse authResponse = new AuthResponse();
         authResponse.setJwt(jwtProvider.generateToken(authentication));
         authResponse.setMessage("User registered successfully!");
-        authResponse.setUserInfo(UserInfoMapper.toDto(savedUser));
+
+        UserRole role = userRoleRepository.findById(savedUserInformation.getRoleId()).orElseThrow(
+                () -> new AppException("User not found",
+                        HttpStatus.NOT_FOUND, "USER_NOT_FOUND"));
+
+        UserInformationDto userInformationDto =
+                UserInformationMapper.toDto(savedUserInformation, role.getRoleType());
+        authResponse.setUserInformation(userInformationDto);
 
         response.setData(authResponse);
         response.isSuccess();
@@ -63,57 +80,73 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public BaseApiResponse<AuthResponse> login(LoginRequest request) throws UserException {
+    public BaseApiResponse<AuthResponse> login(LoginRequest request) {
         BaseApiResponse<AuthResponse> response = new BaseApiResponse<>();
+
+        if (request.getEmail() == null || request.getEmail().trim().isEmpty()) {
+            throw new AppException("Email is required",
+                    HttpStatus.BAD_REQUEST, "INVALID_EMAIL");
+        }
+
+        if (request.getPassword() == null || request.getPassword().trim().isEmpty()) {
+            throw new AppException("Password is required",
+                    HttpStatus.BAD_REQUEST, "INVALID_PASSWORD");
+        }
+
         String email = request.getEmail();
         String password = request.getPassword();
 
         Authentication authentication = authenticate(email, password);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-//        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-//
-//        String role = authorities.iterator().next().getAuthority();
         String jwt = jwtProvider.generateToken(authentication);
 
-        // update last longin
-        UserInfo userInfo = userInfoRepository.findByEmail(email);
-        userInfo.setLastLogin(LocalDateTime.now());
-        userInfoRepository.save(userInfo);
+        // update last login
+        UserInformation userInformation = userInformationRepository.findByEmail(email);
+        userInformation.setLastLogin(LocalDateTime.now());
+        userInformationRepository.save(userInformation);
 
         AuthResponse authResponse = new AuthResponse();
         authResponse.setJwt(jwt);
         authResponse.setMessage("User logged in successfully!");
-        authResponse.setUserInfo(UserInfoMapper.toDto(userInfo));
+
+        // userRole
+        UserRole role = userRoleRepository.findById(userInformation.getRoleId()).orElseThrow(
+                () -> new AppException("User not found",
+                        HttpStatus.NOT_FOUND, "USER_NOT_FOUND"));
+        authResponse.setUserInformation(UserInformationMapper.toDto(userInformation, role.getRoleType()));
+
         response.setData(authResponse);
         response.isSuccess();
 
         return response;
     }
 
-    private Authentication authenticate(String email, String password) throws UserException {
+    private Authentication authenticate(String email, String password) {
         UserDetails userDetails = customUserImpl.loadUserByUsername(email);
         if (userDetails == null) {
-            throw new UserException("Invalid email!");
+            throw new AppException("Invalid email or password",
+                    HttpStatus.UNAUTHORIZED, "INVALID_CREDENTIALS");
         }
 
         if (!passwordEncoder.matches(password, userDetails.getPassword())) {
-            throw new UserException("Invalid password!");
+            throw new AppException("Invalid email or password",
+                    HttpStatus.UNAUTHORIZED, "INVALID_CREDENTIALS");
         }
 
-        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        return new UsernamePasswordAuthenticationToken
+                (userDetails, null, userDetails.getAuthorities());
     }
 
-    private UserInfo buildUserInfo(SignUpRequest signUpRequest) {
-        UserInfo userInfo = new UserInfo();
-        userInfo.setEmail(signUpRequest.getEmail());
-        userInfo.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
-        userInfo.setFullName(signUpRequest.getFullName());
-        userInfo.setRole(signUpRequest.getRole());
-        userInfo.setPhone(signUpRequest.getPhone());
-        userInfo.setCreatedAt(LocalDateTime.now());
-        userInfo.setUpdatedAt(LocalDateTime.now());
-        userInfo.setLastLogin(LocalDateTime.now());
-        return userInfo;
+    private UserInformation buildUserInformation(SignUpRequest signUpRequest) {
+        UserInformation userInformation = new UserInformation();
+        userInformation.setEmail(signUpRequest.getEmail());
+        userInformation.setFullName(signUpRequest.getFullName());
+        userInformation.setPassword(signUpRequest.getPassword());
+        userInformation.setPhone(signUpRequest.getPhone());
+        userInformation.setRoleId(signUpRequest.getRoleId());
+        userInformation.setCreatedAt(LocalDateTime.now());
+        userInformation.setUpdatedAt(LocalDateTime.now());
+        return userInformation;
     }
 }

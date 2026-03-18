@@ -1,6 +1,8 @@
 package com.kheng.pos.configurations.security.config;
 
 import com.kheng.pos.configurations.jwt.JwtValidator;
+import com.kheng.pos.configurations.jwt.service.JwtService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -19,6 +21,15 @@ import java.util.List;
 
 @Configuration
 public class SecurityConfig {
+
+    @Autowired
+    private JwtService jwtService;
+
+    @Bean
+    public JwtValidator jwtValidator() {
+        return new JwtValidator(jwtService);
+    }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
@@ -30,7 +41,7 @@ public class SecurityConfig {
                                 .requestMatchers("/api/super-admin/**")
                                 .hasRole("ADMIN")
                                 .anyRequest().permitAll()
-                ).addFilterBefore(new JwtValidator(), BasicAuthenticationFilter.class)
+                ).addFilterBefore(jwtValidator(), BasicAuthenticationFilter.class)
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(
                         c -> c.configurationSource(cfgSource())
