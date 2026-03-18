@@ -5,7 +5,7 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Table(name = "tbl_user")
+@Table(name = "tbl_user_info")
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -32,9 +32,6 @@ public class UserInformation {
 
     @Column(name = "role_id")
     private Long roleId;
-
-    @Column(name = "store_id")
-    private Long storeId;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;

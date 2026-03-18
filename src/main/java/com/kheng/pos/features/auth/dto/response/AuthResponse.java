@@ -1,6 +1,6 @@
-package com.kheng.pos.features.auth.payload.response;
+package com.kheng.pos.features.auth.dto.response;
 
-import com.kheng.pos.features.auth.dto.UserInformationDto;
+import com.kheng.pos.features.user.dto.UserInformationDto;
 import lombok.Data;
 
 @Data

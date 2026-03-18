@@ -1,6 +1,6 @@
 package com.kheng.pos.features.store.dto.request;
 
-import com.kheng.pos.features.auth.dto.StoreContactDto;
+import com.kheng.pos.features.store.dto.StoreContactDto;
 import lombok.Data;
 
 @Data

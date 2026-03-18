@@ -2,7 +2,7 @@ package com.kheng.pos.features.user.controller;
 
 import com.kheng.pos.core.dto.BaseApiResponse;
 import com.kheng.pos.features.user.dto.response.UserProfileResponse;
-import com.kheng.pos.features.user.service.contract.UserInfoService;
+import com.kheng.pos.features.user.service.UserInfoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

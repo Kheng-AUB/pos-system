@@ -1,4 +1,4 @@
-package com.kheng.pos.features.auth.dto;
+package com.kheng.pos.features.store.dto;
 
 import lombok.Data;
 

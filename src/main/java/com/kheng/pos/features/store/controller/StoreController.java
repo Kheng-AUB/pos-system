@@ -4,9 +4,9 @@ import com.kheng.pos.core.dto.BaseApiResponse;
 import com.kheng.pos.exception.AppException;
 import com.kheng.pos.features.store.dto.request.StoreInfoRequest;
 import com.kheng.pos.features.store.dto.response.StoreInfoResponse;
-import com.kheng.pos.features.store.service.contract.StoreService;
+import com.kheng.pos.features.store.service.StoreService;
 import com.kheng.pos.features.user.dto.response.UserProfileResponse;
-import com.kheng.pos.features.user.service.contract.UserInfoService;
+import com.kheng.pos.features.user.service.UserInfoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -17,8 +17,8 @@ import java.util.List;
 @RequestMapping("/api/store")
 @RequiredArgsConstructor
 public class StoreController {
-    private final StoreService storeService;
     private final UserInfoService userInfoService;
+    private final StoreService storeService;
 
     @GetMapping
     public BaseApiResponse<List<StoreInfoResponse>> getAllStores(
@@ -31,12 +31,13 @@ public class StoreController {
     public BaseApiResponse<StoreInfoResponse> createStore(
             @RequestHeader("Authorization") String token,
             @RequestBody StoreInfoRequest request) {
-        
-        BaseApiResponse<UserProfileResponse> userResponse = userInfoService.getUserInfoFromJwtToken(token);
-        UserProfileResponse userInfo = userResponse.getData();
-        
+
+        UserProfileResponse userInfo =
+                userInfoService.getUserInfoFromJwtToken(token).getData();
+
         if (userInfo == null) {
-            throw new AppException("User information not found in token", HttpStatus.UNAUTHORIZED, "INVALID_USER");
+            throw new AppException("User information not found in token",
+                    HttpStatus.UNAUTHORIZED, "INVALID_USER");
         }
 
         return storeService.createStore(request, userInfo);

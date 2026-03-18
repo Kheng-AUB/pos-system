@@ -2,13 +2,16 @@ package com.kheng.pos.features.store.mapper;
 
 import com.kheng.pos.databases.pg.store.entity.StoreContact;
 import com.kheng.pos.databases.pg.store.entity.StoreInfo;
-import com.kheng.pos.features.auth.dto.StoreContactDto;
-import com.kheng.pos.features.auth.dto.StoreInfoDto;
+import com.kheng.pos.features.store.dto.StoreContactDto;
+import com.kheng.pos.features.store.dto.StoreInfoDto;
+import com.kheng.pos.features.store.dto.StoreInformationDto;
 import com.kheng.pos.features.store.dto.response.StoreInfoResponse;
 
 public class StoreInfoResponseMapper {
     public static StoreInfoResponse toStoreInfoResponse(StoreInfo storeInfo, StoreContact storeContact) {
+
         StoreInfoResponse storeInfoResponse = new StoreInfoResponse();
+        StoreInformationDto storeInformationDto = new StoreInformationDto();
 
         StoreInfoDto storeInfoDto = new StoreInfoDto();
         storeInfoDto.setStoreId(storeInfo.getId());
@@ -18,14 +21,15 @@ public class StoreInfoResponseMapper {
         storeInfoDto.setStoreType(storeInfo.getStoreType());
         storeInfoDto.setCreatedAt(storeInfo.getCreatedAt());
         storeInfoDto.setUpdatedAt(storeInfo.getUpdatedAt());
-        storeInfoResponse.setStoreInfo(storeInfoDto);
+        storeInformationDto.setStoreInfo(storeInfoDto);
 
         StoreContactDto storeContactDto = new StoreContactDto();
-        storeContactDto.setStorePhone(storeContact.getPhone());
-        storeContactDto.setStoreEmail(storeContact.getEmail());
-        storeContactDto.setStoreAddress(storeContact.getAddress());
-        storeInfoResponse.setStoreContact(storeContactDto);
+        storeContactDto.setPhone(storeContact.getPhone());
+        storeContactDto.setEmail(storeContact.getEmail());
+        storeContactDto.setAddress(storeContact.getAddress());
+        storeInformationDto.setStoreContact(storeContactDto);
 
+        storeInfoResponse.setStoreInformation(storeInformationDto);
         return storeInfoResponse;
     }
 }

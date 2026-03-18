@@ -1,4 +1,4 @@
-package com.kheng.pos.features.auth.payload.request;
+package com.kheng.pos.features.auth.dto.request;
 
 import lombok.Data;
 

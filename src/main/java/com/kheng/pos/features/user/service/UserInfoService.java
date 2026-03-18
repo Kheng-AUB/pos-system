@@ -1,4 +1,4 @@
-package com.kheng.pos.features.user.service.contract;
+package com.kheng.pos.features.user.service;
 
 import com.kheng.pos.core.dto.BaseApiResponse;
 import com.kheng.pos.features.user.dto.response.UserProfileResponse;

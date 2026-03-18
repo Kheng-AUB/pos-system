@@ -1,8 +1,7 @@
 package com.kheng.pos.databases.pg.userinfo.mapper;
 
 import com.kheng.pos.databases.pg.userinfo.entity.UserInformation;
-import com.kheng.pos.features.auth.dto.UserInformationDto;
-import jakarta.servlet.http.HttpServletRequest;
+import com.kheng.pos.features.user.dto.UserInformationDto;
 
 public class UserInformationMapper {
     public static UserInformationDto toDto(UserInformation entity, String role) {

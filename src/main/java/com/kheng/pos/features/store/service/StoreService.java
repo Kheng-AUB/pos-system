@@ -1,4 +1,4 @@
-package com.kheng.pos.features.store.service.contract;
+package com.kheng.pos.features.store.service;
 
 import com.kheng.pos.core.dto.BaseApiResponse;
 import com.kheng.pos.features.store.dto.request.StoreInfoRequest;
