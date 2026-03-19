@@ -29,7 +29,6 @@ public class BranchController {
         return branchService.createBranch(request, userInfo);
     }
 
-
     @GetMapping("/{branchId}")
     public BaseApiResponse<BranchDto> getBranchById(
             @PathVariable("branchId") Long branchId
