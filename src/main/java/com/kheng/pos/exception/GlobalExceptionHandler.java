@@ -39,7 +39,7 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse(
                 "1",
                 "fail",
-                "Internal server error"
+                ex.getMessage() != null ? ex.getMessage() : "Internal server error"
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }

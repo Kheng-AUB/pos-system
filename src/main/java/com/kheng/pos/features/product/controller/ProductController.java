@@ -2,6 +2,9 @@ package com.kheng.pos.features.product.controller;
 
 import com.kheng.pos.core.dto.BaseApiResponse;
 import com.kheng.pos.features.product.payload.dto.ProductDto;
+import com.kheng.pos.features.product.payload.request.CreateProductRequest;
+import com.kheng.pos.features.product.payload.request.UpdateProductRequest;
+import com.kheng.pos.features.product.payload.respone.CreateProductResponse;
 import com.kheng.pos.features.product.service.ProductService;
 import com.kheng.pos.features.user.dto.response.UserProfileResponse;
 import com.kheng.pos.features.user.service.UserInfoService;
@@ -18,13 +21,13 @@ public class ProductController {
     private final UserInfoService userInfoService;
 
     @PostMapping("/create")
-    public BaseApiResponse<ProductDto> createProduct(
+    public BaseApiResponse<CreateProductResponse> createProduct(
             @RequestHeader("Authorization") String token,
-            @RequestBody ProductDto productDto) {
+            @RequestBody CreateProductRequest request) {
         UserProfileResponse userInfo =
                 userInfoService.getUserInfoFromJwtToken(token).getData();
 
-        return productService.createProduct(productDto, userInfo);
+        return productService.createProduct(request, userInfo);
     }
 
     @GetMapping("/store/{storeId}")
@@ -48,12 +51,12 @@ public class ProductController {
     public BaseApiResponse<ProductDto> updateProduct(
             @PathVariable("productId") Long productId,
             @RequestHeader("Authorization") String token,
-            @RequestBody ProductDto productDto
+            @RequestBody UpdateProductRequest request
     ) {
         UserProfileResponse userInfo =
                 userInfoService.getUserInfoFromJwtToken(token).getData();
 
-        return productService.updateProduct(productId, productDto, userInfo);
+        return productService.updateProduct(productId, request, userInfo);
     }
 
     @DeleteMapping("{productId}")

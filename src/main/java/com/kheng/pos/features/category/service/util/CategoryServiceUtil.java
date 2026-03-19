@@ -6,13 +6,14 @@ import com.kheng.pos.databases.pg.userinfo.repository.UserStoreRepository;
 import com.kheng.pos.exception.AppException;
 import com.kheng.pos.features.user.dto.response.UserProfileResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class CategoryUtil {
+public class CategoryServiceUtil {
     public static void checkAuthority(UserProfileResponse userInfo, StoreInfo storeInfo, UserStoreRepository userStoreRepository) throws AppException {
-        boolean isAdmin = userInfo.getRoleType().equals("ROLE_ADMIN");
+        boolean isAdmin = userInfo.getRoleType().equals("ROLE_STORE_ADMIN");
         boolean isManager = userInfo.getRoleType().equals("ROLE_STORE_MANAGER");
 
         UserStore userStore = userStoreRepository.findByStoreId(storeInfo.getId());
@@ -20,7 +21,7 @@ public class CategoryUtil {
 
         if (!(isAdmin && isSameStore) && !isManager) {
             throw new AppException("You don't have permission to perform this action",
-                    null, "FORBIDDEN");
+                    HttpStatus.FORBIDDEN, "FORBIDDEN");
         }
     }
 }

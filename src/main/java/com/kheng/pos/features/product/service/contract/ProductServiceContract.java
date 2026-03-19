@@ -2,6 +2,9 @@ package com.kheng.pos.features.product.service.contract;
 
 import com.kheng.pos.core.dto.BaseApiResponse;
 import com.kheng.pos.features.product.payload.dto.ProductDto;
+import com.kheng.pos.features.product.payload.request.CreateProductRequest;
+import com.kheng.pos.features.product.payload.request.UpdateProductRequest;
+import com.kheng.pos.features.product.payload.respone.CreateProductResponse;
 import com.kheng.pos.features.product.service.ProductService;
 import com.kheng.pos.features.product.service.impl.*;
 import com.kheng.pos.features.user.dto.response.UserProfileResponse;
@@ -20,13 +23,13 @@ public class ProductServiceContract implements ProductService {
     private final UpdateProductService updateProductService;
 
     @Override
-    public BaseApiResponse<ProductDto> createProduct(ProductDto productDto, UserProfileResponse userInfo) {
-        return createProductService.createProduct(productDto, userInfo);
+    public BaseApiResponse<CreateProductResponse> createProduct(CreateProductRequest request, UserProfileResponse userInfo) {
+        return createProductService.createProduct(request, userInfo);
     }
 
     @Override
-    public BaseApiResponse<ProductDto> updateProduct(Long productId,ProductDto productDto, UserProfileResponse userInfo) {
-        return updateProductService.updateProduct(productId,productDto, userInfo);
+    public BaseApiResponse<ProductDto> updateProduct(Long productId, UpdateProductRequest request, UserProfileResponse userInfo) {
+        return updateProductService.updateProduct(productId,request, userInfo);
     }
 
     @Override

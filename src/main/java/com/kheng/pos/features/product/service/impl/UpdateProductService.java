@@ -6,6 +6,7 @@ import com.kheng.pos.databases.pg.product.repository.ProductRepository;
 import com.kheng.pos.exception.AppException;
 import com.kheng.pos.features.product.mapper.ProductMapper;
 import com.kheng.pos.features.product.payload.dto.ProductDto;
+import com.kheng.pos.features.product.payload.request.UpdateProductRequest;
 import com.kheng.pos.features.user.dto.response.UserProfileResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,7 +21,7 @@ import static com.kheng.pos.core.util.GlobalUtils.isBlank;
 public class UpdateProductService {
     private final ProductRepository productRepository;
 
-    public BaseApiResponse<ProductDto> updateProduct(Long productId, ProductDto productDto, UserProfileResponse userInfo) {
+    public BaseApiResponse<ProductDto> updateProduct(Long productId, UpdateProductRequest request, UserProfileResponse userInfo) {
         BaseApiResponse<ProductDto> response = new BaseApiResponse<>();
 
         // check if product exist
@@ -30,27 +31,24 @@ public class UpdateProductService {
                     HttpStatus.NOT_FOUND, "PRODUCT_NOT_FOUND");
         }
 
-        if (!isBlank(productDto.getName())) {
-            product.setName(productDto.getName());
+        if (!isBlank(request.getName())) {
+            product.setName(request.getName());
         }
-        if (!isBlank(productDto.getDescription())) {
-            product.setDescription(productDto.getDescription());
+        if (!isBlank(request.getDescription())) {
+            product.setDescription(request.getDescription());
         }
-        if (!isBlank(productDto.getSku())) {
-            product.setSku(productDto.getSku());
+        if (!isBlank(request.getBrand())) {
+            product.setBrand(request.getBrand());
         }
-        if (!isBlank(productDto.getBrand())) {
-            product.setBrand(productDto.getBrand());
-        }
-        if (!isBlank(productDto.getImage())) {
-            product.setImage(productDto.getImage());
+        if (!isBlank(request.getImage())) {
+            product.setImage(request.getImage());
         }
 
-        if (productDto.getMrp() != null) {
-            product.setMrp(productDto.getMrp());
+        if (request.getMrp() != null) {
+            product.setMrp(request.getMrp());
         }
-        if (productDto.getSellingPrice() != null) {
-            product.setSellingPrice(productDto.getSellingPrice());
+        if (request.getSellingPrice() != null) {
+            product.setSellingPrice(request.getSellingPrice());
         }
 
         product.setUpdatedAt(LocalDateTime.now());

@@ -8,6 +8,5 @@ public class StoreInfoRequest {
     private String brand;
     private String description;
     private String storeType;
-    private String status;
     private StoreContactDto storeContact;
 }

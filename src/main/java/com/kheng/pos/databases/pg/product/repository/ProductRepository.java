@@ -10,12 +10,12 @@ import java.util.List;
 public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findByStoreId(Long storeId);
 
-    @Query(value = """
-            SELECT p FROM tbl_product p
-            WHERE p.store_id = :storeId 
-            AND (LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%')))
-            OR LOWER(p.brand) LIKE LOWER(CONCAT('%', :keyword,'%'))
-            OR LOWER(p.sku) LIKE LOWER(CONCAT('%', :keyword, '%'))                    
-            """, nativeQuery = true)
+    @Query("""
+                SELECT p FROM Product p
+                WHERE p.storeId = :storeId
+                AND (LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%'))
+                     OR LOWER(p.brand) LIKE LOWER(CONCAT('%', :keyword, '%'))
+                     OR LOWER(p.sku) LIKE LOWER(CONCAT('%', :keyword, '%')))
+            """)
     List<Product> searchByKeyword(@Param("storeId") Long storeId, @Param("keyword") String keyword);
 }

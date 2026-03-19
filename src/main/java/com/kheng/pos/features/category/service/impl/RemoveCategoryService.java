@@ -5,8 +5,6 @@ import com.kheng.pos.databases.pg.cateogry.entity.Category;
 import com.kheng.pos.databases.pg.cateogry.repository.CategoryRepository;
 import com.kheng.pos.databases.pg.store.entity.StoreInfo;
 import com.kheng.pos.databases.pg.store.repository.StoreInfoRepository;
-import com.kheng.pos.databases.pg.userinfo.entity.UserStore;
-import com.kheng.pos.databases.pg.userinfo.repository.UserRoleRepository;
 import com.kheng.pos.databases.pg.userinfo.repository.UserStoreRepository;
 import com.kheng.pos.exception.AppException;
 import com.kheng.pos.features.user.dto.response.UserProfileResponse;
@@ -15,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import static com.kheng.pos.features.category.service.util.CategoryUtil.checkAuthority;
+import static com.kheng.pos.features.category.service.util.CategoryServiceUtil.checkAuthority;
 
 @Service
 @RequiredArgsConstructor

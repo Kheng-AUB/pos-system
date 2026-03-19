@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import static com.kheng.pos.features.category.service.util.CategoryUtil.checkAuthority;
+import static com.kheng.pos.features.category.service.util.CategoryServiceUtil.checkAuthority;
 
 @Service
 @RequiredArgsConstructor
