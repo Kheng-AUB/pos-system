@@ -1,11 +1,15 @@
 package com.kheng.pos.features.branch.payload.request;
 
-import lombok.Data;
+import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Data
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class UpdateBranchRequest {
     private String name;
 
@@ -17,7 +21,7 @@ public class UpdateBranchRequest {
 
     private List<String> workingDays;
 
-    private LocalDateTime openTime;
+    private LocalTime openTime;
 
-    private LocalDateTime closeTime;
+    private LocalTime closeTime;
 }

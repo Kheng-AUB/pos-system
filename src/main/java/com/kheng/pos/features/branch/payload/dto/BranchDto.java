@@ -3,6 +3,7 @@ package com.kheng.pos.features.branch.payload.dto;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Data
@@ -23,9 +24,9 @@ public class BranchDto {
 
     private Long managerId;
 
-    private LocalDateTime openTime;
+    private LocalTime openTime;
 
-    private LocalDateTime closeTime;
+    private LocalTime closeTime;
 
     private LocalDateTime createAt;
 

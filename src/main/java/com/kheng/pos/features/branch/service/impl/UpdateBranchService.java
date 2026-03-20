@@ -2,15 +2,13 @@ package com.kheng.pos.features.branch.service.impl;
 
 import com.kheng.pos.core.dto.BaseApiResponse;
 import com.kheng.pos.databases.pg.branch.entity.Branch;
+import com.kheng.pos.databases.pg.branch.enums.DaysOfWeek;
 import com.kheng.pos.databases.pg.branch.repository.BranchRepository;
-import com.kheng.pos.databases.pg.store.repository.StoreInfoRepository;
-import com.kheng.pos.databases.pg.userinfo.repository.UserStoreRepository;
 import com.kheng.pos.exception.AppException;
 import com.kheng.pos.features.branch.mapper.BranchMapper;
 import com.kheng.pos.features.branch.payload.dto.BranchDto;
 import com.kheng.pos.features.branch.payload.request.UpdateBranchRequest;
 import com.kheng.pos.features.user.dto.response.UserProfileResponse;
-import com.kheng.pos.features.user.service.UserInfoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -53,8 +51,14 @@ public class UpdateBranchService {
         if (!isBlank(request.getAddress())) {
             existing.setAddress(request.getAddress());
         }
-        if (!request.getWorkingDays().isEmpty()) {
-            existing.setWorkingDays(request.getWorkingDays());
+        if (request.getWorkingDays() != null && !request.getWorkingDays().isEmpty()) {
+            existing.setWorkingDays(
+                    request.getWorkingDays()
+                            .stream()
+                            .map(String::toUpperCase)
+                            .map(DaysOfWeek::valueOf)
+                            .toList()
+            );
         }
         if (request.getOpenTime() != null) {
             existing.setOpenTime(request.getOpenTime());

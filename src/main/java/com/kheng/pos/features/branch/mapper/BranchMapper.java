@@ -1,13 +1,15 @@
 package com.kheng.pos.features.branch.mapper;
 
 import com.kheng.pos.databases.pg.branch.entity.Branch;
+import com.kheng.pos.databases.pg.branch.enums.DaysOfWeek;
 import com.kheng.pos.features.branch.payload.dto.BranchDto;
 import com.kheng.pos.features.branch.payload.request.CreateBranchRequest;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class BranchMapper {
-    public static BranchDto toDto(Branch savedBranch){
+    public static BranchDto toDto(Branch savedBranch) {
         BranchDto branchDto = new BranchDto();
         branchDto.setBranchId(savedBranch.getId());
         branchDto.setName(savedBranch.getName());
@@ -16,7 +18,12 @@ public class BranchMapper {
         branchDto.setPhone(savedBranch.getPhone());
         branchDto.setOpenTime(savedBranch.getOpenTime());
         branchDto.setCloseTime(savedBranch.getCloseTime());
-        branchDto.setWorkingDays(savedBranch.getWorkingDays());
+
+        List<String> workingDays = savedBranch.getWorkingDays()
+                .stream().map(DaysOfWeek::name)
+                .toList();
+        branchDto.setWorkingDays(workingDays);
+
         branchDto.setStoreId(savedBranch.getStoreId());
         branchDto.setManagerId(savedBranch.getManagerId());
         branchDto.setCreateAt(savedBranch.getCreateAt());
@@ -25,13 +32,19 @@ public class BranchMapper {
         return branchDto;
     }
 
-    public static Branch toEntity(CreateBranchRequest request){
+    public static Branch toEntity(CreateBranchRequest request) {
         Branch branch = new Branch();
         branch.setName(request.getName());
         branch.setEmail(request.getEmail());
         branch.setPhone(request.getPhone());
         branch.setAddress(request.getAddress());
-        branch.setWorkingDays(request.getWorkingDays());
+
+        List<DaysOfWeek> workingDays = request.getWorkingDays()
+                .stream().map(String::toUpperCase)
+                .map(DaysOfWeek::valueOf)
+                .toList();
+        branch.setWorkingDays(workingDays);
+
         branch.setOpenTime(request.getOpenTime());
         branch.setCloseTime(request.getCloseTime());
 
