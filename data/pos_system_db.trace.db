@@ -189,3 +189,27 @@ BRANCH_WORKING_DAYS [42001-232]
 2026-03-20 11:38:16.342566+07:00 jdbc[13]: exception
 org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "SELECT * [*]FROMTBL_BRANCH_WORKING_DAYS"; SQL statement:
 SELECT * FROMTBL_BRANCH_WORKING_DAYS [42000-232]
+2026-03-24 09:41:16.578323+07:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "ROLE_TYPE" not found; SQL statement:
+UPDATE ROLE_TYPE [42102-232]
+2026-03-24 09:41:36.570183+07:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "UPDATE TBL_USER_ROLE[*]"; expected "., AS, SET"; SQL statement:
+UPDATE TBL_USER_ROLE [42001-232]
+2026-03-24 09:42:36.175990+07:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "UPDATE TBL_USER_ROLE \000d\000aSET ROLE_TYPE = 'ROLE_BRANCH_CASHIER'\000d\000a\000d\000a[*]Rollback"; SQL statement:
+UPDATE TBL_USER_ROLE 
+SET ROLE_TYPE = 'ROLE_BRANCH_CASHIER'
+
+Rollback [42000-232]
+2026-03-24 09:42:54.421162+07:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "UPDATE TBL_USER_ROLE \000d\000aSET ROLE_TYPE = 'ROLE_BRANCH_CASHIER'\000d\000a\000d\000a[*]rollback"; SQL statement:
+UPDATE TBL_USER_ROLE 
+SET ROLE_TYPE = 'ROLE_BRANCH_CASHIER'
+
+rollback [42000-232]
+2026-03-24 09:45:53.806838+07:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "Truncate [*]TBL_USER_ROLE"; expected "TABLE"; SQL statement:
+Truncate TBL_USER_ROLE [42001-232]
+2026-03-24 09:46:34.494304+07:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "[*]TBL_USER_ROLE"; expected "TRUNCATE"; SQL statement:
+TBL_USER_ROLE [42001-232]

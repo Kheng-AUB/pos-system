@@ -1,5 +1,6 @@
 package com.kheng.pos.databases.pg.userinfo.entity;
 
+import com.kheng.pos.databases.pg.userinfo.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -30,8 +31,9 @@ public class UserInformation {
     @Column(name = "password")
     private String password;
 
-    @Column(name = "role_id")
-    private Long roleId;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "user_role")
+    private UserRole userRole;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;

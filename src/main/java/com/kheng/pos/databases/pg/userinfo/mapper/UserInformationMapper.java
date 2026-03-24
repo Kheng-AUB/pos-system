@@ -4,7 +4,7 @@ import com.kheng.pos.databases.pg.userinfo.entity.UserInformation;
 import com.kheng.pos.features.user.dto.UserInformationDto;
 
 public class UserInformationMapper {
-    public static UserInformationDto toDto(UserInformation entity, String role) {
+    public static UserInformationDto toDto(UserInformation entity) {
         if (entity == null) {
             return null;
         }
@@ -13,7 +13,7 @@ public class UserInformationMapper {
         dto.setFullName(entity.getFullName());
         dto.setEmail(entity.getEmail());
         dto.setPhone(entity.getPhone());
-        dto.setRole(role);
+        dto.setRole(entity.getUserRole().name());
         dto.setCreatedAt(entity.getCreatedAt());
         dto.setUpdatedAt(entity.getUpdatedAt());
         dto.setLastLogin(entity.getLastLogin());

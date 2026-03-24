@@ -1,13 +1,14 @@
-package com.kheng.pos.features.auth.dto.request;
+package com.kheng.pos.features.employee.payload.request;
 
 import com.kheng.pos.databases.pg.userinfo.enums.UserRole;
 import lombok.Data;
 
 @Data
-public class SignUpRequest {
+public class UpdateEmployeeRequest {
     private String fullName;
     private String email;
     private String phone;
     private String password;
-    private UserRole userRole;
+    private UserRole role;
+    private Long branchId;
 }

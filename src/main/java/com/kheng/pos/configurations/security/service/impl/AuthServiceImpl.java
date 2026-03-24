@@ -5,10 +5,10 @@ import com.kheng.pos.configurations.jwt.JwtProvider;
 import com.kheng.pos.configurations.security.service.contract.AuthService;
 import com.kheng.pos.core.dto.BaseApiResponse;
 import com.kheng.pos.databases.pg.userinfo.entity.UserInformation;
-import com.kheng.pos.databases.pg.userinfo.entity.UserRole;
+import com.kheng.pos.databases.pg.userinfo.enums.UserRole;
 import com.kheng.pos.databases.pg.userinfo.mapper.UserInformationMapper;
 import com.kheng.pos.databases.pg.userinfo.repository.UserInformationRepository;
-import com.kheng.pos.databases.pg.userinfo.repository.UserRoleRepository;
+
 import com.kheng.pos.exception.AppException;
 import com.kheng.pos.features.user.dto.UserInformationDto;
 import com.kheng.pos.features.auth.dto.request.LoginRequest;
@@ -32,7 +32,6 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
     private final CustomUserImpl customUserImpl;
-    private final UserRoleRepository userRoleRepository;
 
     @Override
     public BaseApiResponse<AuthResponse> signup(SignUpRequest request) {
@@ -49,7 +48,7 @@ public class AuthServiceImpl implements AuthService {
                     HttpStatus.CONFLICT, "USER_EXISTS");
         }
 
-        if (request.getRoleId() == 2) {
+        if (request.getUserRole() == UserRole.ROLE_ADMIN) {
             throw new AppException("You are not allowed to register as admin!",
                     HttpStatus.FORBIDDEN, "ADMIN_REGISTRATION_DENIED");
         }
@@ -65,12 +64,8 @@ public class AuthServiceImpl implements AuthService {
         authResponse.setJwt(jwtProvider.generateToken(authentication));
         authResponse.setMessage("User registered successfully!");
 
-        UserRole role = userRoleRepository.findById(savedUserInformation.getRoleId()).orElseThrow(
-                () -> new AppException("User not found",
-                        HttpStatus.NOT_FOUND, "USER_NOT_FOUND"));
-
         UserInformationDto userInformationDto =
-                UserInformationMapper.toDto(savedUserInformation, role.getRoleType());
+                UserInformationMapper.toDto(savedUserInformation);
         authResponse.setUserInformation(userInformationDto);
 
         response.setData(authResponse);
@@ -109,16 +104,10 @@ public class AuthServiceImpl implements AuthService {
         AuthResponse authResponse = new AuthResponse();
         authResponse.setJwt(jwt);
         authResponse.setMessage("User logged in successfully!");
-
-        // userRole
-        UserRole role = userRoleRepository.findById(userInformation.getRoleId()).orElseThrow(
-                () -> new AppException("User not found",
-                        HttpStatus.NOT_FOUND, "USER_NOT_FOUND"));
-        authResponse.setUserInformation(UserInformationMapper.toDto(userInformation, role.getRoleType()));
+        authResponse.setUserInformation(UserInformationMapper.toDto(userInformation));
 
         response.setData(authResponse);
         response.isSuccess();
-
         return response;
     }
 
@@ -144,7 +133,7 @@ public class AuthServiceImpl implements AuthService {
         userInformation.setFullName(signUpRequest.getFullName());
         userInformation.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
         userInformation.setPhone(signUpRequest.getPhone());
-        userInformation.setRoleId(signUpRequest.getRoleId());
+        userInformation.setUserRole(signUpRequest.getUserRole());
         userInformation.setCreatedAt(LocalDateTime.now());
         userInformation.setUpdatedAt(LocalDateTime.now());
         return userInformation;

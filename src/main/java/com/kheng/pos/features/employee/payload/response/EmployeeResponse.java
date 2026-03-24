@@ -1,16 +1,18 @@
-package com.kheng.pos.features.user.dto.response;
+package com.kheng.pos.features.employee.payload.response;
 
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Data
-public class UserProfileResponse {
-    private Long userId;
+public class EmployeeResponse {
+    private Long employeeId;
     private String fullName;
     private String email;
     private String phone;
     private String role;
+    private Long storeId;
+    private Long branchId;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

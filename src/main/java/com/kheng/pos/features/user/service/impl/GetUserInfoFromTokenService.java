@@ -3,7 +3,6 @@ package com.kheng.pos.features.user.service.impl;
 import com.kheng.pos.configurations.jwt.service.JwtService;
 import com.kheng.pos.core.dto.BaseApiResponse;
 import com.kheng.pos.databases.pg.userinfo.repository.UserInformationRepository;
-import com.kheng.pos.databases.pg.userinfo.repository.UserRoleRepository;
 import com.kheng.pos.exception.AppException;
 import com.kheng.pos.features.user.dto.response.UserProfileResponse;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +15,6 @@ import static com.kheng.pos.features.user.service.util.UserInfoServiceUtil.getUs
 @RequiredArgsConstructor
 public class GetUserInfoFromTokenService {
     private final UserInformationRepository userInformationRepository;
-    private final UserRoleRepository userRoleRepository;
     private final JwtService jwtService;
 
     public BaseApiResponse<UserProfileResponse> getUserInfoFromJwtToken(String token) {
@@ -29,6 +27,6 @@ public class GetUserInfoFromTokenService {
         }
 
         return getUserProfileResponseByEmailBaseApiResponse
-                (response, email, userInformationRepository, userRoleRepository);
+                (response, email, userInformationRepository);
     }
 }
