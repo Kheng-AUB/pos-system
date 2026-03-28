@@ -2,7 +2,7 @@ spring:
   datasource:
     url: jdbc:postgresql://aws-1-ap-south-1.pooler.supabase.com:5432/postgres?sslmode=require&connectTimeout=30&socketTimeout=60
     username: postgres.erfqosalcpqpqdqllabt
-    password: Kheng@2311!!
+    password: 
     driver-class-name: org.postgresql.Driver
 
   hikari:
